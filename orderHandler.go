@@ -51,10 +51,25 @@ func GetOrder(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(order)
 }
 
-func CreateOrders(w http.ResponseWriter, r *http.Request) {
+func CreateOrder(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var order Order
-	json.NewDecoder(r.Body).Decode(&order)
+	if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Extract the ItemID from the request body (assuming it's a JSON field)
+	itemID := r.FormValue("item_id")
+
+	if itemID == "" {
+		http.Error(w, "ItemID is required in the request body.", http.StatusBadRequest)
+		return
+	}
+
+	// Set the ItemID in the order
+	order.ItemID = itemID
+
 	dbOrder.Create(&order)
 	json.NewEncoder(w).Encode(order)
 }
