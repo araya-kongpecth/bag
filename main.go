@@ -9,26 +9,6 @@ import (
 
 func initializeRouter() {
 
-	/*
-		bag
-		- /items  - GET
-		- /items/{id} - GET
-		- /createItem - PUT
-		- /updateItem - POST
-		- /deleteItem - DELETE
-
-		order
-		- /orders - GET
-		- /orders/{id} - GET
-		- /createOrder - PUT
-		- /updateOrder - POST
-		- /deleteOrder - DELETE
-
-		user
-		- /getToken - POST
-		- /refresh - GET
-	*/
-
 	r := mux.NewRouter()
 
 	//Get All Items and item by id
@@ -57,7 +37,7 @@ func initializeRouter() {
 	protectedRoutes.HandleFunc("/items/{item_id}", DeleteItems).Methods("DELETE")
 
 	//Create, Update, Delete Orders (JWT check)
-	protectedRoutes.HandleFunc("/orders", CreateOrders).Methods("POST")
+	protectedRoutes.HandleFunc("/orders", CreateOrder).Methods("POST")
 	protectedRoutes.HandleFunc("/orders/{id}", UpdateOrders).Methods("PUT")
 	protectedRoutes.HandleFunc("/orders/{id}", DeleteOrders).Methods("DELETE")
 

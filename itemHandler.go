@@ -16,9 +16,10 @@ var err error
 const DSN = "root:Ice@0623@tcp(127.0.0.1:3306)/bag?charset=utf8&parseTime=True&loc=Local"
 
 type Item struct {
-	ItemID   string `json:"item_id"`
+	ItemID   uint   `json:"item_id" gorm:"primaryKey"`
 	ItemName string `json:"item_name"`
-	Amount   int    `json:"amount"`
+	Price    uint   `json:"price"`
+	Amount   uint   `json:"amount"`
 }
 
 func initializeMigration() {

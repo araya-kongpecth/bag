@@ -16,9 +16,8 @@ var errOrder error
 const dsnOrder = "root:Ice@0623@tcp(127.0.0.1:3306)/bag?charset=utf8&parseTime=True&loc=Local"
 
 type Order struct {
-	gorm.Model
-	ItemID string
-	Item   Item `gorm:"foreignKey:ItemID;references:item_id"`
+	OrderID uint `json:"order_id"`
+	ItemID  uint `gorm:"references:item_id"`
 }
 
 func initializeMigrationOrder() {
@@ -27,11 +26,8 @@ func initializeMigrationOrder() {
 		fmt.Println(errOrder.Error())
 		panic("Cannot connect to dbOrder")
 	}
-	// AutoMigrate the models
-	if err := dbOrder.AutoMigrate(&Order{}); err != nil {
-		fmt.Println(err.Error())
-		panic("Error while migrating Order model")
-	}
+	dbOrder.Migrator().CreateTable(&Order{})
+
 }
 
 func GetOrders(w http.ResponseWriter, r *http.Request) {
@@ -45,10 +41,10 @@ func GetOrders(w http.ResponseWriter, r *http.Request) {
 func GetOrder(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	var order Order
-	json.NewDecoder(r.Body).Decode(&order)
-	dbOrder.First(&order, params["id"])
-	json.NewEncoder(w).Encode(order)
+	var orders []Order
+	json.NewDecoder(r.Body).Decode(&orders)
+	dbOrder.Where("order_id = ?", params["id"]).Find(&orders)
+	json.NewEncoder(w).Encode(orders)
 }
 
 func CreateOrder(w http.ResponseWriter, r *http.Request) {
@@ -59,18 +55,16 @@ func CreateOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Extract the ItemID from the request body (assuming it's a JSON field)
-	itemID := r.FormValue("item_id")
-
-	if itemID == "" {
-		http.Error(w, "ItemID is required in the request body.", http.StatusBadRequest)
+	var item Item
+	if err := dbOrder.First(&item, order.ItemID).Error; err != nil {
+		// If the item does not exist, return an error message
+		http.Error(w, "Store does not have this item", http.StatusBadRequest)
 		return
 	}
 
-	// Set the ItemID in the order
-	order.ItemID = itemID
-
+	// Create the order
 	dbOrder.Create(&order)
+
 	json.NewEncoder(w).Encode(order)
 }
 
