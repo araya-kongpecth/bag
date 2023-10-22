@@ -7,6 +7,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
+
+	"github.com/araya-kongpecth/mux-miniproject/database"
 )
 
 var DB *gorm.DB
@@ -19,9 +21,9 @@ type Item struct {
 	Amount   uint   `json:"amount"`
 }
 
-func initializeMigration() {
+func InitializeMigration() {
 
-	DB, err = main.InitializeDB()
+	DB, err = database.InitializeDB()
 	if err != nil {
 		fmt.Println(err.Error())
 		panic("Cannot connect to DB")

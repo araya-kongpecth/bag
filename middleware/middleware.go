@@ -1,11 +1,15 @@
-package main
+package middleware
 
 import (
 	"fmt"
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
+
+	"github.com/araya-kongpecth/mux-miniproject/handlers"
 )
+
+var jwtKey = []byte("secret_key")
 
 func AuthMiddleware(next http.Handler) http.Handler {
 	fmt.Println("Authenticate function run!!!!")
@@ -21,9 +25,10 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		tokenStr := cookie.Value
-		claims := &Claims{}
+		claims := &handlers.Claims{}
 
 		tkn, err := jwt.ParseWithClaims(tokenStr, claims,
+
 			func(t *jwt.Token) (interface{}, error) {
 				return jwtKey, nil
 			})

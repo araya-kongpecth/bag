@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/araya-kongpecth/mux-miniproject/database"
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
@@ -21,9 +22,9 @@ type User struct {
 	Password  string `json:"password"`
 }
 
-func initializeMigrationUser() {
+func InitializeMigrationUser() {
 
-	dbUser, errUser = InitializeDB()
+	dbUser, errUser = database.InitializeDB()
 	if errUser != nil {
 		fmt.Println(errUser.Error())
 		panic("Cannot connect to dbUser")

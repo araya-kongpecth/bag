@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/araya-kongpecth/mux-miniproject/database"
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
@@ -17,9 +18,9 @@ type Order struct {
 	ItemID  uint `gorm:"references:item_id"`
 }
 
-func initializeMigrationOrder() {
+func InitializeMigrationOrder() {
 
-	dbOrder, errOrder = InitializeDB()
+	dbOrder, errOrder = database.InitializeDB()
 	if errOrder != nil {
 		fmt.Println(errOrder.Error())
 		panic("Cannot connect to dbOrder")
