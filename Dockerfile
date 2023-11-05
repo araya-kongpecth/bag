@@ -1,11 +1,13 @@
-FROM golang:1.20.4-alpine3.17
+# Use the official Golang image
+FROM golang:1.21.1-alpine
 
-WORKDIR /cmd
+WORKDIR /app
 
+# Copy the entire project into the container
 COPY . .
 
-RUN go build -o api
+RUN go build -o bag ./cmd
 
 EXPOSE 9000
 
-CMD [ "./api" ]
+CMD ["./bag"]
